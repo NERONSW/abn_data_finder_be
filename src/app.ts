@@ -6,6 +6,7 @@ import express, {
 
 import dotenv from "dotenv";
 import cors from "cors";
+import abnDataRoutes from "./routes/abnDataRoutes.ts";
 
 dotenv.config();
 
@@ -33,6 +34,9 @@ app.use(
 app.get("/", (req: Request, res: Response) => {
   res.send("Backend running successfully!");
 });
+
+//ABN data related routes
+app.use("/api/abn-data", abnDataRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

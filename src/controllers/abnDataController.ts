@@ -17,13 +17,26 @@ export const getAllABNs = async (
     const filter: Record<string, any> = {};
 
     // Equality filters
-    if (req.query.state) filter.state = req.query.state;
+    if (req.query.abn) filter.abn = req.query.abn;
     if (req.query.postcode) filter.postcode = req.query.postcode;
-    if (req.query.entity_type) filter.entity_type = req.query.entity_type;
+
+    //if (req.query.state) filter.state = req.query.state;
+    //if (req.query.entity_type) filter.entity_type = req.query.entity_type;
+
     if (req.query.abn_status) filter.abn_status = req.query.abn_status;
     if (req.query.gst_status) filter.gst_status = req.query.gst_status;
     if (req.query.replaced) filter.replaced = req.query.replaced;
     if (req.query.asic_number) filter.asic_number = req.query.asic_number;
+
+    //Multi value filters
+    const states = parseMultiValue(req.query.state as string);
+    if (states?.length) {
+      filter.state = { $in: states };
+    }
+    const entityTypes = parseMultiValue(req.query.entity_type as string);
+    if (entityTypes?.length) {
+      filter.entity_type = { $in: entityTypes };
+    }
 
     //Date-range filters
     const dateFilters: { field: string; start?: string; end?: string }[] = [
@@ -63,12 +76,7 @@ export const getAllABNs = async (
         // Partial search (regex)
         // i = case-insensitive
         const regex = new RegExp(search, "i");
-        filter.$or = [
-          { entity_name: regex },
-          { other_entities: regex },
-          { abn: regex },
-          { asic_number: regex },
-        ];
+        filter.$or = [{ entity_name: regex }, { other_entities: regex }];
       }
     }
 
@@ -99,4 +107,16 @@ export const getAllABNs = async (
   } catch (error) {
     next(error);
   }
+};
+
+//Multi value filter helper function
+const parseMultiValue = (value?: string | string[]) => {
+  if (!value) return undefined;
+
+  if (Array.isArray(value)) return value;
+
+  return value
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean);
 };

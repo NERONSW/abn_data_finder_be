@@ -1,5 +1,21 @@
 import mongoose from "mongoose";
 
+// Sub-schema for other_entities
+const otherEntitySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    type: {
+      type: String,
+      trim: true,
+    },
+  },
+  { _id: false } // prevents auto _id for each subdocument
+);
+
 //ABN Schema
 const abnSchema = new mongoose.Schema(
   {
@@ -14,9 +30,11 @@ const abnSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
+    name_type: {
+      type: String,
+    },
     other_entities: {
-      type: [String],
+      type: [otherEntitySchema],
       default: [],
     },
 
@@ -84,7 +102,6 @@ abnSchema.index({ abn: 1 }, { unique: true });
 // Text search on names
 abnSchema.index({
   entity_name: "text",
-  other_entities: "text",
 });
 
 // Filter by state + abn_status + record_last_updated range

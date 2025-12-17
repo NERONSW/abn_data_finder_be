@@ -19,14 +19,11 @@ export const getAllABNs = async (
     // Equality filters
     if (req.query.abn) filter.abn = req.query.abn;
     if (req.query.postcode) filter.postcode = req.query.postcode;
-
-    //if (req.query.state) filter.state = req.query.state;
-    //if (req.query.entity_type) filter.entity_type = req.query.entity_type;
-
     if (req.query.abn_status) filter.abn_status = req.query.abn_status;
     if (req.query.gst_status) filter.gst_status = req.query.gst_status;
     if (req.query.replaced) filter.replaced = req.query.replaced;
     if (req.query.asic_number) filter.asic_number = req.query.asic_number;
+    if (req.query.name_type) filter.name_type = req.query.name_type;
 
     //Multi value filters
     const states = parseMultiValue(req.query.state as string);
@@ -69,14 +66,11 @@ export const getAllABNs = async (
     if (req.query.search) {
       const search = req.query.search as string;
 
-      // If search length > 4, use text index
       if (search.length > 4) {
         filter.$text = { $search: search };
       } else {
-        // Partial search (regex)
-        // i = case-insensitive
         const regex = new RegExp(search, "i");
-        filter.$or = [{ entity_name: regex }, { other_entities: regex }];
+        filter.entity_name = regex;
       }
     }
 

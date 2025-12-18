@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import ABN from "../models/abnData.ts";
+import ABN from "../models/abnData.js";
 
 export const getAllABNs = async (
   req: Request,

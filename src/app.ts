@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 // Allowing CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://abn-data-finder-fe.vercel.app"],
     credentials: true,
   })
 );

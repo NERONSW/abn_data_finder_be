@@ -108,6 +108,7 @@ abnSchema.index({ entity_name_normalized: 1 });
 
 //Single-field filter indexes (frequent filters)
 abnSchema.index({ state: 1 });
+abnSchema.index({ postcode: 1 });
 abnSchema.index({ entity_type: 1 });
 abnSchema.index({ abn_status: 1 });
 abnSchema.index({ gst_status: 1 });
@@ -118,6 +119,12 @@ abnSchema.index({ record_last_updated: -1 });
 //Date-range filter indexes
 abnSchema.index({ abn_status_from_date: -1 });
 abnSchema.index({ gst_status_from_date: -1 });
+
+// State + Postcode
+abnSchema.index({
+  state: 1,
+  postcode: 1,
+});
 
 // ABN status + date + updated
 abnSchema.index({
@@ -133,18 +140,20 @@ abnSchema.index({
   record_last_updated: -1,
 });
 
-// State + ABN status + ABN date + updated
+// State + Postcode + ABN status + ABN date + updated
 abnSchema.index({
   state: 1,
+  postcode: 1,
   abn_status: 1,
   abn_status_from_date: -1,
   record_last_updated: -1,
 });
 
-// Entity type + State + ABN status + ABN date + GST status + GST date + updated
+// Entity type + State + Postcode + ABN status + ABN date + GST status + GST date + updated
 abnSchema.index({
   entity_type: 1,
   state: 1,
+  postcode: 1,
   abn_status: 1,
   abn_status_from_date: -1,
   gst_status: 1,

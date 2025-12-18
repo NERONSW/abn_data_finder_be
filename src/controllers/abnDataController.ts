@@ -64,13 +64,19 @@ export const getAllABNs = async (
 
     //Search (full-text + partial search)
     if (req.query.search) {
-      const search = req.query.search as string;
+      const search = (req.query.search as string).trim().toLowerCase();
 
-      if (search.length > 4) {
+      //Partial search
+      if (search.length <= 4) {
+        filter.entity_name_normalized = {
+          $gte: search,
+          $lt: search + "\uffff",
+        };
+      }
+
+      //Long search(text index)
+      else {
         filter.$text = { $search: search };
-      } else {
-        const regex = new RegExp(search, "i");
-        filter.entity_name = regex;
       }
     }
 

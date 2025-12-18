@@ -13,7 +13,7 @@ const otherEntitySchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { _id: false } // prevents auto _id for each subdocument
+  { _id: false }
 );
 
 //ABN Schema
@@ -83,10 +83,12 @@ const abnSchema = new mongoose.Schema(
       enum: ["Y", "N"],
       default: "N",
     },
-
     record_last_updated: {
       type: Date,
       required: true,
+    },
+    entity_name_normalized: {
+      type: String,
     },
   },
   {
@@ -94,45 +96,61 @@ const abnSchema = new mongoose.Schema(
   }
 );
 
-//INDEXES – DESIGNED FOR FILTERING & SEARCH PERFORMANCE
+//Indexing for search
 
-// Exact lookup (unique ABN)
+//Exact-match unique fields
 abnSchema.index({ abn: 1 }, { unique: true });
-
-// Text search on names
-abnSchema.index({
-  entity_name: "text",
-});
-
-// Filter by state + abn_status + record_last_updated range
-abnSchema.index({ state: 1, abn_status: 1, record_last_updated: -1 });
-
-// Filter by abn_status + abn_status_from_date range
-abnSchema.index({ abn_status: 1, abn_status_from_date: -1 });
-
-// Filter by state + abn_status + abn_status_from_date range
-abnSchema.index({ state: 1, abn_status: 1, abn_status_from_date: -1 });
-
-// Filter by entity_type + abn_status + abn_status_from_date range
-abnSchema.index({ entity_type: 1, abn_status: 1, abn_status_from_date: -1 });
-
-// GST status + gst_status_from_date range
-abnSchema.index({ gst_status: 1, gst_status_from_date: -1 });
-
-// Entity type + record_last_updated range
-abnSchema.index({ entity_type: 1, record_last_updated: -1 });
-
-// ASIC number exact search
 abnSchema.index({ asic_number: 1 });
 
-// Replaced flag filter
+//Text search
+abnSchema.index({ entity_name: "text" });
+abnSchema.index({ entity_name_normalized: 1 });
+
+//Single-field filter indexes (frequent filters)
+abnSchema.index({ state: 1 });
+abnSchema.index({ entity_type: 1 });
+abnSchema.index({ abn_status: 1 });
+abnSchema.index({ gst_status: 1 });
+abnSchema.index({ name_type: 1 });
 abnSchema.index({ replaced: 1 });
+abnSchema.index({ record_last_updated: -1 });
 
-// State + postcode exact search
-abnSchema.index({ state: 1, postcode: 1 });
+//Date-range filter indexes
+abnSchema.index({ abn_status_from_date: -1 });
+abnSchema.index({ gst_status_from_date: -1 });
 
-// Combined for entity type + state + date filtering
-abnSchema.index({ entity_type: 1, state: 1, record_last_updated: -1 });
+// ABN status + date + updated
+abnSchema.index({
+  abn_status: 1,
+  abn_status_from_date: -1,
+  record_last_updated: -1,
+});
+
+// GST status + date + updated
+abnSchema.index({
+  gst_status: 1,
+  gst_status_from_date: -1,
+  record_last_updated: -1,
+});
+
+// State + ABN status + ABN date + updated
+abnSchema.index({
+  state: 1,
+  abn_status: 1,
+  abn_status_from_date: -1,
+  record_last_updated: -1,
+});
+
+// Entity type + State + ABN status + ABN date + GST status + GST date + updated
+abnSchema.index({
+  entity_type: 1,
+  state: 1,
+  abn_status: 1,
+  abn_status_from_date: -1,
+  gst_status: 1,
+  gst_status_from_date: -1,
+  record_last_updated: -1,
+});
 
 // Model
 const ABN = mongoose.model("ABN", abnSchema);

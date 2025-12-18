@@ -6,7 +6,7 @@ import express, {
 
 import dotenv from "dotenv";
 import cors from "cors";
-import abnDataRoutes from "./routes/abnDataRoutes.ts";
+import abnDataRoutes from "./routes/abnDataRoutes.js";
 
 dotenv.config();
 

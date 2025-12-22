@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllABNs } from "../controllers/abnDataController.js";
+import { getAllABNs } from "../controllers/abnDataController";
 
 const router = express.Router();
 

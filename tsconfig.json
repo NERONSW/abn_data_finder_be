@@ -2,13 +2,17 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "module": "NodeNext", // Essential for "type": "module"
-    "moduleResolution": "NodeNext",
+
     "target": "ES2020",
-    "emitDeclarationOnly": false, // Fix: Allows generation of server.js
-    "allowImportingTsExtensions": false, // Fix: Must be false to emit JS
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+
     "strict": true,
-    "skipLibCheck": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "sourceMap": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
